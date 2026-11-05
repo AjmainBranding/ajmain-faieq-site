@@ -403,7 +403,15 @@ h3 { font-weight: 700; }
 .guarantee h3 { font-size: 1.45rem; }
 .guarantee p { color: var(--ink-2); }
 .guarantee .fine { font-size: 0.9rem; color: var(--ink-3); }
+.foot-note { display: block; margin-top: 6px; font-size: 0.78rem; color: var(--ink-3); }
 </style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "z8yulf21rs");
+</script>
 </head>
 <body>
 <header class="top"><div class="wrap"><span class="brand">Ajmain Faieq</span></div></header>
@@ -800,12 +808,25 @@ h3 { font-weight: 700; }
 
 </main>
 
-<footer class="site"><div class="wrap">© 2026 Ajmain Faieq</div></footer>
+<footer class="site"><div class="wrap">© 2026 Ajmain Faieq<span class="foot-note">This site uses Microsoft Clarity to measure visits and see how the page is used.</span></div></footer>
 
 <script>
 // When the page is hosted on your own domain, paste your form service's endpoint here
 // (Formspree, Web3Forms or similar). While it is empty the form shows a preview message and sends nothing.
 var FORM_ENDPOINT = "https://formspree.io/f/mwllzqkj";
+
+// Visitor tracking events. They only do something on the hosted site, where the tracking script is loaded.
+function track(name) { try { if (window.clarity) window.clarity("event", name); } catch (e) {} }
+Array.prototype.forEach.call(document.querySelectorAll('a[href="#apply"]'), function (a) {
+  a.addEventListener("click", function () { track("apply_click"); });
+});
+(function () {
+  var f = document.getElementById("apply-form"), started = false;
+  f.addEventListener("input", function (e) {
+    if (started || (e.target && e.target.name === "_gotcha")) return;
+    started = true; track("form_start");
+  });
+})();
 
 (function () {
   var form = document.getElementById("apply-form");
@@ -826,6 +847,7 @@ var FORM_ENDPOINT = "https://formspree.io/f/mwllzqkj";
     });
     if (firstBad) {
       var lab = form.querySelector('label[for="' + firstBad.id + '"]');
+      track("form_incomplete");
       showError("Please check this field: " + (lab ? lab.textContent : "one of the fields") + ".");
       firstBad.focus();
       return;
@@ -852,9 +874,11 @@ var FORM_ENDPOINT = "https://formspree.io/f/mwllzqkj";
       if (!r.ok) throw new Error("bad status");
       // Clear the fields once sent, so a refresh shows an empty form instead of the old answers.
       form.reset(); btn.disabled = false; btn.textContent = "Send application";
+      track("application_sent");
       form.hidden = true; done.hidden = false;
     }).catch(function () {
       btn.disabled = false; btn.textContent = "Send application";
+      track("application_failed");
       showError("Your application did not send. Please try again, or message @Ajmainfaieq22 on X.");
     });
   });
