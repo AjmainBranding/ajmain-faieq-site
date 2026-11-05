@@ -810,6 +810,9 @@ var FORM_ENDPOINT = "https://formspree.io/f/mwllzqkj";
     }
     var data = {};
     new FormData(form).forEach(function (v, k) { data[k] = v; });
+    // Hidden trap field: a person never fills it. If a bot did, drop the submission quietly.
+    if (data._gotcha) { form.hidden = true; done.hidden = false; return; }
+    delete data._gotcha;
     data._subject = "New application: " + (data.name || "") + " (" + (data.budget || "") + ")";
 
     if (!FORM_ENDPOINT) {
